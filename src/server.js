@@ -1,22 +1,16 @@
-require("dotenv").config();
-
 const app = require('./app');
-const PORT = process.env.PORT;
+const { env } = require('./config/env.js');
 
-const authRoutes = require("./routes/auth.routes");
-const notFound = require("./middlewares/notFound");
+//recupère le PORT
+const PORT = env.port;
 
-// 1️⃣ routes d’auth
-app.use('/monapi/auth', authRoutes);
-
-// 2️⃣ 404 global, à la fin
-app.use(notFound);
-
-if (!PORT) {
-  console.log("PORT absent, veuillez compléter le fichier .env");
-  process.exit(1);
+//Vérifie que le port existe
+if(!PORT){
+    console.log('PORT absent veuillez completer le fichier .env');
+    //stop le programme de lancement de node
+    process.exit(1);
 }
 
-app.listen(PORT, () =>
-  console.log(`Serveur lancé sur http://localhost:${PORT}`)
-);
+app.listen(PORT, ()=>{
+    console.log(`server lancé sur le port ${PORT}`);
+});
