@@ -1,27 +1,20 @@
-//grâce à dotenv
-import dotenv from "dotenv";
+// src/config/env.js
 
-dotenv.config();
+// On charge le .env UNE SEULE FOIS ici
+require('dotenv').config();
 
-// lister et verifier les infos necessaires pour demarrer l'app
+const env = {
+  PORT: process.env.PORT,
 
-const required = ["DB_HOST", "DB_USER", "DB_NAME", "JWT_SECRET"];
-for (const key of required) {
-  if (!process.env[key]) {
-    throw new Error(`${key}:manquent dans le fichier d'environnement .env`);
-  }
-}
+  DB_HOST: process.env.DB_HOST,
+  DB_USER: process.env.DB_USER,
+  DB_PASSWORD: process.env.DB_PASSWORD,
+  DB_NAME: process.env.DB_NAME,
 
-//on recupere les informations de mon fichier .env
-
-export const env = {
-  port: process.env.PORT ?? 4000,
-  db: {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-  },
-  jwtSecret: process.env.JWT_SECRET,
+  JWT_SECRET: process.env.JWT_SECRET,
 };
+
+// Petit log pour débug (tu pourras le supprimer après)
+console.log('ENV CHARGÉ :', env);
+
+module.exports = { env };

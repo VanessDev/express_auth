@@ -6,6 +6,7 @@ const authRoutes = require('./routes/auth.routes.js'); // importe tes routes
 const app = express();           // Crée l'application Express
 
 app.use(cors());                 // Active CORS pour accepter les requêtes externes
+// CORS sert à autoriser ou bloquer les requêtes HTTP entre deux origines différentes.
 app.use(express.json());         // Active le parsing JSON du corps des requêtes
 app.use(morgan('dev'));          // Active le logger pour chaque requête
 
