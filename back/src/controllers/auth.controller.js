@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const pool = require('../db/index');
 // mes variables d'environnement 
 const { env } = require('../config/env.js');
+//import des services
+const { register } = require('../services/auth.service.js');
 
 //  REGISTER 
 
@@ -16,11 +18,9 @@ const registerController = async (req, res) => {
 
     // validation basique
     if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'email et mot de passe obligatoires',
-        data: null,
-      });
+    const error = new Error('email et mdp obligatoire');
+    error.status = 400;
+    throw error;
     }
 
     // vérifier si l’email existe déjà

@@ -2,7 +2,7 @@
 
 const jwt = require('jsonwebtoken');
 const { env } = require('../config/env.js');
-const pool = require('../db/index.js'); // ✅ pas de { pool }
+const pool = require('../db/index.js'); 
 
 // middleware d'auth
 async function authenticate(req, res, next) {

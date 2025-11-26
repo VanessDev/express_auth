@@ -11,5 +11,5 @@ if (!PORT) {
 }
 
 app.listen(PORT, () => {
-  console.log(`✅ Serveur lancé sur le port ${PORT}`);
+  console.log(`✅  Serveur lancé sur le port ${PORT}`);
 });
