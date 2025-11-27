@@ -1,42 +1,68 @@
 import { useState } from "react";
 import { register } from "../services/api";
 
-//useState :useState est un hook de React qui permet
-// d’ajouter et de mettre à jour un état local dans un composant fonctionnel.
-
 function RegisterForm() {
-  //etat pour stocker les valeurs du form
   const [email, setEmail] = useState("");
-  //etat pour stocker les messages d'erreur
+  const [password, setPassword] = useState(""); 
   const [message, setMessage] = useState("");
-  //etat pour savoir si on est en train d'envoyer une requete
   const [loading, setLoading] = useState(false);
 
-  //la fonction utilisée quand on soumet le formulaire
   async function handleSubmit(event) {
-    //empeche le rechargement de la page quand on soumet le form
     event.preventDefault();
-    //Je change le status du state loading
     setLoading(true);
+    setMessage("");
 
-    alert('je suis en train de soumettre mon form');
+    try {
+      await register(email, password);
+      setMessage("Inscription réussie ");
+
+      setEmail("");
+      setPassword("");
+    } catch (error) {
+      setMessage("Erreur lors de l'inscription ");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  return [
+  return (
     <div>
-        <h2>Inscription</h2>
-        {/*  formulaire avec la logique du submit*/}
+      <h2>Inscription</h2>
 
-        <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="email">Email :</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={loading}
+          />
+        </div>
 
-            <button type="submit">
-                {loading ? 'Chargement' : 'S inscrire'}
-            </button>
+        <div>
+          <label htmlFor="password">Mot de passe :</label>
+          <input
+            type="password"
+            id="password"   
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            disabled={loading}
+          />
+        </div>
 
-        </form>
-        
+        <button type="submit" disabled={loading}>
+          {loading ? "Chargement..." : "S'inscrire"}
+        </button>
+      </form>
+
+      {message && <p>{message}</p>}
     </div>
-  ]
+  );
 }
 
-export default RegisterForm
+export default RegisterForm;

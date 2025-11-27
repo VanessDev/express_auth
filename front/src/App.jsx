@@ -11,6 +11,8 @@ function App() {
     <BrowserRouter>
     <Routes>
       <Route path='/register' element={<RegisterForm/>}></Route>
+      
+      <Route path='*' element={<Navigate to = "/register"></Navigate>}/>
     </Routes>
     </BrowserRouter>
     </>
