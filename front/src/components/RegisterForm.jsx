@@ -1,68 +1,82 @@
 import { useState } from "react";
 import { register } from "../services/api";
+import { useNavigate, Link } from "react-router-dom";
 
 function RegisterForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState(""); 
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+    //etat pour stocker les valeur du form
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    //etat pour stocker les messages d'erreur
+    const [message, setMessage] = useState('');
+    //etat pour savoir si on est en train d'envoyer une requeste
+    const [loading, setLoading] = useState(false);
+    //hook pour naviguer vers une autre page
+    const navigate = useNavigate();
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    setLoading(true);
-    setMessage("");
-
-    try {
-      await register(email, password);
-      setMessage("Inscription réussie ");
-
-      setEmail("");
-      setPassword("");
-    } catch (error) {
-      setMessage("Erreur lors de l'inscription ");
-      console.error(error);
-    } finally {
-      setLoading(false);
+    //la function utilisé quand on soumet le formulaire
+    async function handleSubmit(event) {
+        //empeche le rechargement de la page quand on soumet le form
+        event.preventDefault();
+        //Je change le status du state loading
+        setLoading(true);
+        setMessage('');
+        try {
+            //on appelant notre service api
+            const result = await register(email, password);
+            //on affiche un message de succes
+            setMessage('Inscription réussie!')
+            //faire une redirection vers login
+            setTimeout(()=>{
+                navigate('/login');
+            }, 3000)
+        } catch (error) {
+            console.error('erreur', error);
+            setMessage(error.message);
+        }finally{
+            setLoading(false);
+        }
     }
-  }
 
-  return (
-    <div>
-      <h2>Inscription</h2>
-
-      <form onSubmit={handleSubmit}>
+    return (
         <div>
-          <label htmlFor="email">Email :</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={loading}
-          />
+            <h2>Inscription</h2>
+
+            {/*formulaire avec la logique de submit*/}
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label htmlFor="email">Email:</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        id="email" 
+                        value={email} 
+                        onChange={(e)=>setEmail(e.target.value)} 
+                        required 
+                        disabled={loading}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="password">MDP:</label>
+                    <input 
+                        type="password"
+                        id="password"
+                        value={password} 
+                        onChange={(e)=>{setPassword(e.target.value)}}
+                        required
+                        disabled={loading}
+                    />
+                </div>
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Chargement' : 's inscrire'}
+                </button>
+            </form>
+
+            {/* afficher les message de succes et d'erreurs */}
+            {message}
+
+            <div>deja un compte ? <Link to={'/login'}>Se connecter</Link></div>
         </div>
-
-        <div>
-          <label htmlFor="password">Mot de passe :</label>
-          <input
-            type="password"
-            id="password"   
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={loading}
-          />
-        </div>
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Chargement..." : "S'inscrire"}
-        </button>
-      </form>
-
-      {message && <p>{message}</p>}
-    </div>
-  );
+    )
 }
 
 export default RegisterForm;
