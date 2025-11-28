@@ -68,7 +68,6 @@ const registerController = async (req, res) => {
 const loginController = async (req, res) => {
   try {
     const { email, password } = req.body || {};
-
     // validation rapide
     if (!email || !password) {
       return res.status(400).json({
@@ -78,11 +77,15 @@ const loginController = async (req, res) => {
       });
     }
 
+    
+
     // récupérer l’utilisateur en BDD
     const [rows] = await pool.query(
       'SELECT id, email, password_hash, role FROM users WHERE email = ?',
       [email]
     );
+
+  
 
     if (rows.length === 0) {
       return res.status(401).json({
@@ -104,6 +107,8 @@ const loginController = async (req, res) => {
       });
     }
 
+  
+
     // génération du token JWT
     const token = jwt.sign(
       {
@@ -114,6 +119,7 @@ const loginController = async (req, res) => {
       env.JWT_SECRET, // assure-toi que JWT_SECRET est défini dans ton .env
       { expiresIn: '1h' }
     );
+    
 
     return res.status(200).json({
       success: true,
@@ -138,8 +144,8 @@ const loginController = async (req, res) => {
 // PROFILE 
 
 const profileController = async (req, res) => {
-  console.log('profileController');
-  res.send('Profile OK');
+  console.log(req.user);
+    res.json({user: req.user});
 };
 
 module.exports = {

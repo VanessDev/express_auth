@@ -1,16 +1,17 @@
-const express = require('express');   // Importe le framework Express
-const cors = require('cors');         // Importe le middleware CORS
-const morgan = require('morgan');     // Importe le logger HTTP Morgan
+const express = require('express');
+const cors = require('cors');
+const morgan = require('morgan');
 
 // importe tes routes
 const authRoutes = require('./routes/auth.routes.js');
 const demoRoutes = require('./routes/demo.routes.js');
+const profileRoutes = require('./routes/profile.routes.js');
 
-const app = express();           // Crée l'application Express
+const app = express();
 
-app.use(cors());                 // Active CORS pour accepter les requêtes externes
-app.use(express.json());         // Active le parsing JSON du corps des requêtes
-app.use(morgan('dev'));          // Active le logger pour chaque requête
+app.use(cors());
+app.use(express.json());
+app.use(morgan('dev'));
 
 // petite route de test
 app.get('/test', (req, res) => {
@@ -23,16 +24,19 @@ app.get('/test', (req, res) => {
 // routes d'authentification → /api/auth/...
 app.use('/api/auth', authRoutes);
 
-// ✅ routes démo → /api/demo/search/safe , /api/demo/search/unsafe
-app.use('/api/demo', demoRoutes);   
+// routes démo → /api/demo/...
+app.use('/api/demo', demoRoutes);
+
+// ✅ route du profil / liste d'utilisateurs → /api/profile/...
+app.use('/api/profile', profileRoutes);
 
 // Middleware de gestion d'erreurs
 app.use((err, req, res, next) => {
-  console.error(err); // log complet de l’erreur dans la console
+  console.error(err);
 
   res.status(err.status || 500).json({
     error: err.message || 'erreur serveur',
   });
 });
 
-module.exports = app;   // on exporte l'instance Express
+module.exports = app;
