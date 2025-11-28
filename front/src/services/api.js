@@ -5,21 +5,27 @@ const API_URL = import.meta.env.VITE_API_URL;
 // ======================
 // logique d'inscription
 // ======================
-export async function register(email, password) {
+export async function register(email, password, birthday, birthcity) {
   const response = await fetch(`${API_URL}/api/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email, password }),
+  
+    body: JSON.stringify({ email, password, birthday, birthcity }),
   });
 
-  const data = await response.json().catch(() => null);
+  let data = null;
+  try {
+    data = await response.json();
+  } catch (e) {
+    data = null;
+  }
 
   if (!response.ok) {
-    // on récupère un éventuel message d'erreur renvoyé par le back
     const message =
-      (data && (data.error || data.Error)) || "Inscription a échoué";
+      (data && (data.error || data.Error || data.message)) ||
+      "Inscription a échoué";
     throw new Error(message);
   }
 
@@ -38,11 +44,17 @@ export async function login(email, password) {
     body: JSON.stringify({ email, password }),
   });
 
-  const data = await response.json().catch(() => null);
+  let data = null;
+  try {
+    data = await response.json();
+  } catch (e) {
+    data = null;
+  }
 
   if (!response.ok) {
     const message =
-      (data && (data.error || data.Error)) || "Echec de la connexion";
+      (data && (data.error || data.Error || data.message)) ||
+      "Echec de la connexion";
     throw new Error(message);
   }
 
@@ -52,10 +64,7 @@ export async function login(email, password) {
 // ======================
 // récupération du profil
 // ======================
-// ⚠️ ici je remets TON URL ORIGINALE pour ne rien casser côté back
-// /api/auth/profil (si plus tard tu veux utiliser /api/profile, on l’adaptera)
 export async function getProfil(token) {
-
   const response = await fetch(`${API_URL}/api/auth/profil`, {
     method: "GET",
     headers: {
@@ -64,13 +73,16 @@ export async function getProfil(token) {
     },
   });
 
-  const data = await response.json();
-
-  
+  let data = null;
+  try {
+    data = await response.json();
+  } catch (e) {
+    data = null;
+  }
 
   if (!response.ok) {
     const message =
-      (data && (data.error || data.Error)) ||
+      (data && (data.error || data.Error || data.message)) ||
       "erreur lors de la récupération du profil";
     throw new Error(message);
   }

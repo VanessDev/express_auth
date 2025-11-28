@@ -9,30 +9,30 @@ const { env } = require('../config/env.js');
 //import des services
 const { register } = require('../services/auth.service.js');
 
-//  REGISTER 
+// REGISTER
 
 const registerController = async (req, res) => {
   try {
-    console.log('BODY RECU :', req.body);
-    const { email, password } = req.body || {};
+    console.log("BODY RECU :", req.body);
+    const { email, password, birthday, birthcity } = req.body || {};
 
     // validation basique
-    if (!email || !password) {
-    const error = new Error('email et mdp obligatoire');
-    error.status = 400;
-    throw error;
+    if (!email || !password || !birthday || !birthcity) {
+      const error = new Error("email, password, birthday et birthcity sont obligatoires");
+      error.status = 400;
+      throw error;
     }
 
     // vérifier si l’email existe déjà
     const [existing] = await pool.query(
-      'SELECT id FROM users WHERE email = ?',
+      "SELECT id FROM users WHERE email = ?",
       [email]
     );
 
     if (existing.length > 0) {
       return res.status(409).json({
         success: false,
-        message: 'Un utilisateur avec cet email existe déjà',
+        message: "Un utilisateur avec cet email existe déjà",
         data: null,
       });
     }
@@ -41,27 +41,34 @@ const registerController = async (req, res) => {
     const hash = await bcrypt.hash(password, 10);
 
     // insertion en BDD
-    const query = 'INSERT INTO users (email, password_hash) VALUES (?, ?)';
-    const [result] = await pool.query(query, [email, hash]);
+    const query =
+      "INSERT INTO users (email, password_hash, birthday, birthcity) VALUES (?, ?, ?, ?)";
+    const [result] = await pool.query(query, [email, hash, birthday, birthcity]);
 
     // réponse
     return res.status(201).json({
       success: true,
-      message: 'Utilisateur enregistré',
+      message: "Utilisateur enregistré",
       data: {
         id: result.insertId,
         email,
+        birthday,
+        birthcity,
       },
     });
   } catch (error) {
-    console.error('Erreur registerController :', error);
-    return res.status(500).json({
+    console.error("Erreur registerController :", error);
+
+    // si on a mis un status custom (ex: 400), on le respecte
+    const status = error.status || 500;
+    return res.status(status).json({
       success: false,
-      message: 'Erreur serveur',
+      message: error.status ? error.message : "Erreur serveur",
       data: null,
     });
   }
 };
+
 
 //  LOGIN 
 

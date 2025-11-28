@@ -63,6 +63,8 @@ function ProfilePage() {
           <p>id: {user.id}</p>
           <p>email: {user.email}</p>
           <p>inscrit le: {new Date(user.created_at).toLocaleDateString()}</p>
+          <p>date de naissance: {user.birthday}</p>
+          <p>ville de naissance: {user.birthcity}</p>
           <button onClick={Deco}>Deconnection</button>
         </div>
       )}
