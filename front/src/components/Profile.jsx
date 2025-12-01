@@ -20,8 +20,7 @@ function Profile() {
         return r.json();
       })
       .then((data) => {
-        // adapte selon ce que renvoie ton backend
-        // par ex: setUsers(data.data) si la clé est "data"
+        // si ton backend renvoie { data: [...] }
         setUsers(data.data || data);
         setLoading(false);
       })
@@ -33,7 +32,6 @@ function Profile() {
   }, []);
 
   if (loading) return <p>Chargement...</p>;
-
   if (errorMsg) return <p>{errorMsg}</p>;
 
   async function handleDelete(id) {
@@ -54,44 +52,44 @@ function Profile() {
   }
 
   return (
-    <>
-      <div className="container">
-        <h1>Users of the class</h1>
+    <div className="container">
+      <h1>Users of the class</h1>
 
-        {users.map((user) => (
-          <div key={user.id} className="card">
-            <div className="students">
+      {users.map((user) => (
+        <div key={user.id} className="card">
+          <div className="students">
+            <div>
               <strong>{user.id}.</strong> {user.name} - {user.age} ans
-              {/* adapte selon les champs que tu as en BDD */}
               {user.note !== undefined && <> - Note: {user.note}</>}
               {user.city && <> - City: {user.city}</>}
-              <div className="btns">
-                <div>
-                  <button onClick={() => navigate(`/edit/${user.id}`)}>
-                    Modify User
-                  </button>
-                </div>
+            </div>
 
-                <div>
-                  <button
-                    className="btn danger"
-                    onClick={() => handleDelete(user.id)} // ✅ user.id et plus f.id
-                  >
-                    Supprimer
-                  </button>
-                </div>
+            <div className="btns">
+              <div>
+                <button onClick={() => navigate(`/edit/${user.id}`)}>
+                  Modify User
+                </button>
+              </div>
+
+              <div>
+                <button
+                  className="btn danger"
+                  onClick={() => handleDelete(user.id)}
+                >
+                  Supprimer
+                </button>
               </div>
             </div>
           </div>
-        ))}
+        </div>
+      ))}
 
-        <div className="btns">
-          <div>
-            <button onClick={() => navigate("/create")}>Add a user</button>
-          </div>
+      <div className="btns">
+        <div>
+          <button onClick={() => navigate("/create")}>Add a user</button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

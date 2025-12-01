@@ -1,38 +1,31 @@
-//import des hooks
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getProfil } from "../services/api";
+import "../App.css";
 
 function ProfilePage() {
-  //hook de navigation
   const navigate = useNavigate();
-  //state de stockage
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  //chargé au chargement de la page
   useEffect(() => {
     async function handleProfile() {
-      //recuperer le token dans le localstorage
       const token = localStorage.getItem("token");
       if (!token) {
         navigate("/login");
         return;
       }
+
       try {
-        //on call l'api! function getProfile
         const data = await getProfil(token);
-
-    
-
         setUser(data.user);
       } catch (error) {
         console.log("erreur", error);
         setError(error.message);
 
-        //gestion au cas ou le token est invalide ou introuvable
         if (error.message.includes("401") || error.message.includes("Token")) {
           localStorage.removeItem("token");
           navigate("/login");
@@ -42,7 +35,6 @@ function ProfilePage() {
       }
     }
 
-    //appel de ma function
     handleProfile();
   }, [navigate]);
 
@@ -52,20 +44,43 @@ function ProfilePage() {
   }
 
   if (loading) {
-    return <div>en chargement</div>;
+    return <p className="profile-message">Chargement...</p>;
+  }
+
+  if (error) {
+    return <p className="profile-message">{error}</p>;
   }
 
   return (
-    <div>
-      <h2>profile page</h2>
+    <div className="profile-page">
+      <h2 className="profile-title">Profile</h2>
+
       {user && (
-        <div>
-          <p>id: {user.id}</p>
-          <p>email: {user.email}</p>
-          <p>inscrit le: {new Date(user.created_at).toLocaleDateString()}</p>
-          <p>date de naissance: {user.birthday}</p>
-          <p>ville de naissance: {user.birthcity}</p>
-          <button onClick={Deco}>Deconnection</button>
+        <div className="profile-card">
+          <div className="profile-line">
+            <strong>ID</strong> <span>{user.id}</span>
+          </div>
+
+          <div className="profile-line">
+            <strong>Email</strong> <span>{user.email}</span>
+          </div>
+
+          <div className="profile-line">
+            <strong>Inscrit le</strong>
+            <span>{new Date(user.created_at).toLocaleDateString()}</span>
+          </div>
+
+          <div className="profile-line">
+            <strong>Date de naissance</strong> <span>{user.birthday}</span>
+          </div>
+
+          <div className="profile-line">
+            <strong>Ville de naissance</strong> <span>{user.birthcity}</span>
+          </div>
+
+          <button className="profile-btn" onClick={Deco}>
+            Déconnexion
+          </button>
         </div>
       )}
     </div>

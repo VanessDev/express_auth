@@ -19,13 +19,15 @@ function LoginForm() {
       const result = await login(email, password);
       console.log(result);
 
-      // stockage du token
-      localStorage.setItem("token", result.token);
+      // stockage du token si présent dans la réponse
+      if (result.token) {
+        localStorage.setItem("token", result.token);
+      }
 
       setMessage("✅ Connexion réussie ! Redirection...");
 
       setTimeout(() => {
-        navigate("/profile");
+        navigate("/profilepage"); // redirection logique vers ta belle page profil
       }, 2000);
     } catch (error) {
       console.error("erreur", error);
@@ -64,7 +66,6 @@ function LoginForm() {
           />
         </div>
 
-        {/* bouton dans une div */}
         <div>
           <button type="submit" disabled={loading}>
             {loading ? "Chargement..." : "Se connecter"}
@@ -72,7 +73,6 @@ function LoginForm() {
         </div>
       </form>
 
-      {/* message dans un p */}
       {message && <p>{message}</p>}
 
       <div style={{ textAlign: "center", marginTop: "10px" }}>
