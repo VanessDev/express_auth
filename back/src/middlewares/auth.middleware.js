@@ -20,7 +20,7 @@ async function authenticate(req, res, next) {
 
     // optionnel : récupérer l’utilisateur en BDD
     const [rows] = await pool.query(
-      'SELECT id, email, created_at FROM users WHERE id = ?',
+      'SELECT id, email, created_at, birthday, birthcity FROM users WHERE id = ?',
       [payload.id]
     );
 

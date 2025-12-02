@@ -154,12 +154,15 @@ const loginController = async (req, res) => {
 
 const profileController = async (req, res) => {
   console.log(req.user);
-    res.json({user: req.user});
-    //prompt à l'ia pour avoir un horoscope
-    horoscope()
+  const astro = await horoscope(req.user.birthday)
 
+    res.json({
+      user: req.user,
+      horoscope : astro
+    });
+    //prompt à l'ia pour avoir un horoscope
     
-    
+
 };
 
 module.exports = {
