@@ -6,8 +6,10 @@ const jwt = require('jsonwebtoken');
 const pool = require('../db/index');
 // mes variables d'environnement 
 const { env } = require('../config/env.js');
-//import des services
-const { register } = require('../services/auth.service.js');
+
+//import gemini
+const { horoscope } = require('../services/gemini.services.js');
+
 
 // REGISTER
 
@@ -153,6 +155,11 @@ const loginController = async (req, res) => {
 const profileController = async (req, res) => {
   console.log(req.user);
     res.json({user: req.user});
+    //prompt à l'ia pour avoir un horoscope
+    horoscope()
+
+    
+    
 };
 
 module.exports = {

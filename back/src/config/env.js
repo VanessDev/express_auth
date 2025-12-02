@@ -1,6 +1,3 @@
-// src/config/env.js
-
-// On charge le .env UNE SEULE FOIS ici
 require('dotenv').config();
 
 const env = {
@@ -12,9 +9,10 @@ const env = {
   DB_NAME: process.env.DB_NAME,
 
   JWT_SECRET: process.env.JWT_SECRET,
+
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY,
 };
 
-// Petit log pour débug (tu pourras le supprimer après)
-console.log('ENV CHARGÉ :', env);
+
 
 module.exports = { env };

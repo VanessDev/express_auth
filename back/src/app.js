@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth.routes.js');
 const demoRoutes = require('./routes/demo.routes.js');
 const profileRoutes = require('./routes/profile.routes.js');
 
+
 const app = express();
 
 app.use(cors());
@@ -24,11 +25,13 @@ app.get('/test', (req, res) => {
 // routes d'authentification → /api/auth/...
 app.use('/api/auth', authRoutes);
 
-// routes démo → /api/demo/...
+// routes démo /api/demo/...
 app.use('/api/demo', demoRoutes);
 
-// ✅ route du profil / liste d'utilisateurs → /api/profile/...
+// route du profil / liste d'utilisateurs → /api/profile/...
 app.use('/api/profile', profileRoutes);
+
+
 
 // Middleware de gestion d'erreurs
 app.use((err, req, res, next) => {

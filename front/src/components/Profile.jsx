@@ -53,7 +53,7 @@ function Profile() {
 
   return (
     <div className="container">
-      <h1>Users of the class</h1>
+      <h1>Utilisateurs</h1>
 
       {users.map((user) => (
         <div key={user.id} className="card">
