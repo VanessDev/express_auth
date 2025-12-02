@@ -160,9 +160,6 @@ const profileController = async (req, res) => {
       user: req.user,
       horoscope : astro
     });
-    //prompt à l'ia pour avoir un horoscope
-    
-
 };
 
 module.exports = {

@@ -3,16 +3,15 @@
   box-sizing: border-box;
 }
 
-/* ✅ CENTRAGE DE TOUTE LA PAGE */
+/* ENTRAGE DE TOUTE LA PAGE */
 body {
   font-family: Arial, sans-serif;
-  background-color: #f5f6fa;
   margin: 0;
   min-height: 100vh;
-
   display: flex;
   justify-content: center;   
-  align-items: center;       
+  align-items: center;     
+  background:linear-gradient(135deg, rgba(245, 245, 220, 0.447), rgba(255, 0, 255, 0.429)); 
 }
 
 
@@ -21,6 +20,8 @@ body {
   display: flex;
   justify-content: center;
 }
+
+
 
 
 h2 {
@@ -90,13 +91,14 @@ p {
 
 /* ✅ Lien */
 div a {
-  color: #3498db;
+  color: fuchsia;
   text-decoration: none;
   font-weight: bold;
 }
 
 div a:hover {
   text-decoration: underline;
+  color: #6a82fb;
 }
 
 /* ===== PAGE PROFILE ===== */
@@ -112,6 +114,7 @@ div a:hover {
 .container h1 {
   text-align: center;
   margin-bottom: 30px;
+  color: #3498dbab;
 }
 
 /* Carte utilisateur */
@@ -170,6 +173,7 @@ div a:hover {
 }
 
 /* ===== PROFILE PAGE (ROSÉ & BLEU) ===== */
+
 
 .profile-page {
   width: 100%;
