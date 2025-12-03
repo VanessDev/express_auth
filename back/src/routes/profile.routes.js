@@ -1,15 +1,11 @@
-const { Router } = require("express");
-
+// src/routes/profile.routes.js
+const express = require("express");
+const router = express.Router();
 const profileController = require("../controllers/profile.controller");
-
-const router = Router();
-
-//endpoints users
 
 router.get("/", profileController.listUsers);
 router.get("/:id", profileController.getUsersById);
-router.post("/", profileController.createUser);
 router.put("/:id", profileController.modifyUser);
-
+router.delete("/:id", profileController.deleteUser);
 
 module.exports = router;

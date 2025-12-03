@@ -6,6 +6,9 @@ const morgan = require('morgan');
 const authRoutes = require('./routes/auth.routes.js');
 const demoRoutes = require('./routes/demo.routes.js');
 const profileRoutes = require('./routes/profile.routes.js');
+const anecdoteRoutes = require("./routes/anecdote.routes");
+
+
 
 
 const app = express();
@@ -30,6 +33,9 @@ app.use('/api/demo', demoRoutes);
 
 // route du profil / liste d'utilisateurs → /api/profile/...
 app.use('/api/profile', profileRoutes);
+
+//route du profil des utilisateurs avec les anecdotes
+app.use("/api/anecdote", anecdoteRoutes);
 
 
 

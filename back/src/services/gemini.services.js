@@ -20,6 +20,8 @@ async function horoscope(data) {
     return text;
 }
 
+
+
 module.exports = {
     horoscope
 }

@@ -1,131 +1,143 @@
-// Tableau en mémoire
-const users = [
-  { id: 1, name: "Alice", age: 21, city: "Bordeaux" },
-  { id: 2, name: "Karim", age: 23, city: "Toulouse" },
-  { id: 3, name: "Sophie", age: 20, city: "Lyon" },
-  { id: 4, name: "Léo", age: 22, city: "Paris" },
-  { id: 5, name: "Nina", age: 24, city: "Marseille" },
-];
-
-// id suivant
-let nextUserId = users.length ? Math.max(...users.map((u) => u.id)) + 1 : 1;
+// src/controllers/profile.controller.js
+const pool = require("../db/index");
 
 // READ – liste de tous les users
-exports.listUsers = (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "liste des utilisateurs",
-    data: users,
-  });
+exports.listUsers = async (req, res) => {
+  try {
+    // adapte les noms de colonnes si besoin
+    const [rows] = await pool.query(
+      "SELECT id, email, birthday, birthcity FROM users"
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "liste des utilisateurs",
+      data: rows,
+    });
+  } catch (err) {
+    console.error("Erreur listUsers :", err);
+    res.status(500).json({
+      success: false,
+      message: "Erreur lors de la récupération des utilisateurs",
+      data: null,
+    });
+  }
 };
+
 
 // READ ONE – afficher un user par id
-exports.getUsersById = (req, res) => {
-  const id = Number(req.params.id);
-  const user = users.find((u) => u.id === id);
+exports.getUsersById = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
 
-  if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: "user not found",
-      data: null,
-    });
-  }
+    const [rows] = await pool.query(
+      "SELECT id, email, birthday, birthcity FROM users WHERE id = ?",
+      [id]
+    );
 
-  res.status(200).json({
-    success: true,
-    message: "user found",
-    data: user,
-  });
-};
-
-// CREATE – créer un user
-exports.createUser = (req, res) => {
-  let { name, age, city } = req.body;
-
-  // age arrive souvent en string → on le convertit
-  age = Number(age);
-
-  if (
-    !name ||
-    !city ||
-    !age ||
-    typeof name !== "string" ||
-    typeof city !== "string" ||
-    Number.isNaN(age)
-  ) {
-    return res.status(400).json({
-      success: false,
-      message: "name, age et city sont obligatoires",
-      data: null,
-    });
-  }
-
-  const newUser = { id: nextUserId++, name, age, city };
-  users.push(newUser);
-
-  res.status(201).json({
-    success: true,
-    message: "user created",
-    data: newUser,
-  });
-};
-
-// UPDATE – modifier un user
-exports.modifyUser = (req, res) => {
-  const id = Number(req.params.id);
-  const user = users.find((u) => u.id === id);
-
-  if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: "user not found",
-      data: null,
-    });
-  }
-
-  let { name, age, city } = req.body;
-
-  if (age !== undefined) {
-    age = Number(age);
-    if (Number.isNaN(age)) {
-      return res.status(400).json({
+    if (rows.length === 0) {
+      return res.status(404).json({
         success: false,
-        message: "age doit être un nombre",
+        message: "user not found",
         data: null,
       });
     }
-  }
 
-  if (name !== undefined) user.name = name;
-  if (age !== undefined) user.age = age;
-  if (city !== undefined) user.city = city;
-
-  res.status(200).json({
-    success: true,
-    message: "utilisateur mis à jour",
-    data: user,
-  });
-};
-
-// DELETE – supprimer un user
-exports.deleteUser = (req, res) => {
-  const id = Number(req.params.id);
-  const index = users.findIndex((u) => u.id === id);
-
-  if (index === -1) {
-    return res.status(404).json({
+    res.status(200).json({
+      success: true,
+      message: "user found",
+      data: rows[0],
+    });
+  } catch (err) {
+    console.error("Erreur getUsersById :", err);
+    res.status(500).json({
       success: false,
-      message: "utilisateur non trouvé",
+      message: "Erreur lors de la récupération de l'utilisateur",
       data: null,
     });
   }
+};
 
-  const deletedUser = users.splice(index, 1)[0];
+// UPDATE – modifier un user (email / birthday / birthcity)
+exports.modifyUser = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { email, birthday, birthcity } = req.body;
 
-  res.status(200).json({
-    success: true,
-    message: "utilisateur supprimé",
-    data: deletedUser,
-  });
+    // on récupère d'abord l'utilisateur
+    const [rows] = await pool.query(
+      "SELECT id, email, birthday, birthcity FROM users WHERE id = ?",
+      [id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "user not found",
+        data: null,
+      });
+    }
+
+    const user = rows[0];
+
+    const newEmail = email !== undefined ? email : user.email;
+    const newBirthday = birthday !== undefined ? birthday : user.birthday;
+    const newBirthcity = birthcity !== undefined ? birthcity : user.birthcity;
+
+    await pool.query(
+      "UPDATE users SET email = ?, birthday = ?, birthcity = ? WHERE id = ?",
+      [newEmail, newBirthday, newBirthcity, id]
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "utilisateur mis à jour",
+      data: {
+        id,
+        email: newEmail,
+        birthday: newBirthday,
+        birthcity: newBirthcity,
+      },
+    });
+  } catch (err) {
+    console.error("Erreur modifyUser :", err);
+    res.status(500).json({
+      success: false,
+      message: "Erreur lors de la modification de l'utilisateur",
+      data: null,
+    });
+  }
+};
+
+// DELETE – supprimer un user
+exports.deleteUser = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    const [result] = await pool.query(
+      "DELETE FROM users WHERE id = ?",
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "utilisateur non trouvé",
+        data: null,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "utilisateur supprimé",
+      data: { id },
+    });
+  } catch (err) {
+    console.error("Erreur deleteUser :", err);
+    res.status(500).json({
+      success: false,
+      message: "Erreur lors de la suppression de l'utilisateur",
+      data: null,
+    });
+  }
 };

@@ -6,13 +6,11 @@ const jwt = require('jsonwebtoken');
 const pool = require('../db/index');
 // mes variables d'environnement 
 const { env } = require('../config/env.js');
-
 //import gemini
 const { horoscope } = require('../services/gemini.services.js');
 
 
 // REGISTER
-
 const registerController = async (req, res) => {
   try {
     console.log("BODY RECU :", req.body);
